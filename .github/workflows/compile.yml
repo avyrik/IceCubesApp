@@ -9,15 +9,15 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Initialize App Configuration File (Fixes Missing xcconfig)
+      - name: Initialize App Configuration File
         run: |
           cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
 
-      - name: Compile Unsigned Debug Binary
+      - name: Compile Main Target Only (Bypasses Extension Signing Checks)
         run: |
           xcodebuild build \
                      -project IceCubesApp.xcodeproj \
-                     -scheme IceCubesApp \
+                     -target IceCubesApp \
                      -configuration Debug \
                      -sdk iphoneos \
                      CODE_SIGNING_ALLOWED=NO \
