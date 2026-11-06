@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: xcode-27 # Route directly to the macOS 27 infrastructure with Xcode 27.1+ built-in
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -13,7 +13,7 @@ jobs:
         run: |
           cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
 
-      - name: Compile Unsigned Monolithic Scheme (Fixes SwiftDriver Package Errors)
+      - name: Compile Unsigned Monolithic Scheme (Xcode 27)
         run: |
           xcodebuild build \
                      -project IceCubesApp.xcodeproj \
