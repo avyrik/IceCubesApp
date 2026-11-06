@@ -4,13 +4,15 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26 # Target the modern macOS 26 infrastructure natively
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16.4 (Swift 6.2+ Support)
-        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      - name: Verify Environment and Compiler
+        run: |
+          xcodebuild -version
+          swift --version
 
       - name: Build App Archive Package
         run: |
