@@ -4,30 +4,26 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26 # Target the modern macOS 26 infrastructure natively
+    runs-on: macos-26
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Verify Environment and Compiler
+      - name: Create Archive (Bypasses MediaUI Signing Crashes)
         run: |
-          xcodebuild -version
-          swift --version
-
-      - name: Build App Archive Package
-        run: |
-          xcodebuild -project IceCubesApp.xcodeproj \
+          xcodebuild archive \
+                     -project IceCubesApp.xcodeproj \
                      -scheme IceCubesApp \
                      -configuration Release \
                      -sdk iphoneos \
+                     -archivePath build/IceCubesApp.xcarchive \
                      CODE_SIGNING_ALLOWED=NO \
-                     CODE_SIGNING_REQUIRED=NO \
-                     clean build
+                     CODE_SIGNING_REQUIRED=NO
 
-      - name: Create Unsigned IPA Package
+      - name: Package App into IPA Structure
         run: |
           mkdir -p Payload
-          mv build/Release-iphoneos/IceCubesApp.app Payload/
+          cp -r build/IceCubesApp.xcarchive/Products/Applications/IceCubesApp.app Payload/
           zip -r IceCubesApp.ipa Payload
 
       - name: Upload Finished File
