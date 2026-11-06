@@ -9,6 +9,10 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Initialize App Configuration File (Fixes Missing xcconfig)
+        run: |
+          cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
+
       - name: Compile Unsigned Debug Binary
         run: |
           xcodebuild build \
@@ -23,7 +27,6 @@ jobs:
       - name: Locate and Package App into IPA Structure
         run: |
           mkdir -p Payload
-          # Locate the freshly compiled debug binary out of the build derivatives folder
           APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "IceCubesApp.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
             APP_PATH=$(find . -name "IceCubesApp.app" -type d | head -n 1)
