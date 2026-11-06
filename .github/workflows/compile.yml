@@ -1,0 +1,35 @@
+name: Compile Ice Cubes for iOS
+on:
+  workflow_dispatch: # Allows you to manually trigger the build with a button press
+
+jobs:
+  build:
+    runs-on: macos-14 # Uses Apple Silicon runners in the cloud
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Select Latest Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Build App Simulator / Archive Package
+        run: |
+          xcodebuild -project IceCubesApp.xcodeproj \
+                     -scheme IceCubesApp \
+                     -configuration Release \
+                     -sdk iphoneos \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
+                     clean build
+
+      - name: Create Unsigned IPA Package
+        run: |
+          mkdir -p Payload
+          mv build/Release-iphoneos/IceCubesApp.app Payload/
+          zip -r IceCubesApp.ipa Payload
+
+      - name: Upload Finished File
+        uses: actions/upload-artifact@v4
+        with:
+          name: IceCubes-iOS-App
+          path: IceCubesApp.ipa
