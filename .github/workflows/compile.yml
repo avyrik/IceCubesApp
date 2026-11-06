@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: xcode-27 # Keeping the modern environment so the code compiles natively
+    runs-on: xcode-27 # Maintain the native modern macOS stack
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -13,19 +13,21 @@ jobs:
         run: |
           cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
 
-      - name: Compile Unsigned Monolithic Scheme
+      - name: Compile Unsigned Monolithic Scheme (Safe Driver Resolution)
         run: |
           xcodebuild build \
                      -project IceCubesApp.xcodeproj \
                      -scheme IceCubesApp \
                      -configuration Debug \
                      -destination 'generic/platform=iOS' \
+                     -disable-parallel-plugin-parsing \
+                     -clonedSourcePackagesDirPath .spm_cache \
                      CODE_SIGNING_ALLOWED=NO \
                      CODE_SIGNING_REQUIRED=NO \
                      ONLY_ACTIVE_ARCH=NO \
                      SYMROOT=build
 
-      - name: Package App into IPA Structure (Fixed Path)
+      - name: Package App into IPA Structure
         run: |
           mkdir -p Payload
           cp -r build/Debug-iphoneos/IceCubesApp.app Payload/
