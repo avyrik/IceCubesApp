@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: xcode-27 # Keeping the modern environment so the code compiles natively
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
