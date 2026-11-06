@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: xcode-27 # Route directly to the macOS 27 infrastructure with Xcode 27.1+ built-in
+    runs-on: macos-15
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -13,7 +13,7 @@ jobs:
         run: |
           cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
 
-      - name: Compile Unsigned Monolithic Scheme (Xcode 27)
+      - name: Compile Unsigned Monolithic Scheme
         run: |
           xcodebuild build \
                      -project IceCubesApp.xcodeproj \
@@ -22,17 +22,13 @@ jobs:
                      -destination 'generic/platform=iOS' \
                      CODE_SIGNING_ALLOWED=NO \
                      CODE_SIGNING_REQUIRED=NO \
-                     ONLY_ACTIVE_ARCH=NO
+                     ONLY_ACTIVE_ARCH=NO \
+                     SYMROOT=build
 
-      - name: Locate and Package App into IPA Structure
+      - name: Package App into IPA Structure (Fixed Path)
         run: |
           mkdir -p Payload
-          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "IceCubesApp.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            APP_PATH=$(find . -name "IceCubesApp.app" -type d | head -n 1)
-          fi
-          echo "Found app bundle at: $APP_PATH"
-          cp -r "$APP_PATH" Payload/
+          cp -r build/Debug-iphoneos/IceCubesApp.app Payload/
           zip -r IceCubesApp.ipa Payload
 
       - name: Upload Finished File
