@@ -13,13 +13,13 @@ jobs:
         run: |
           cp IceCubesApp.xcconfig.template IceCubesApp.xcconfig
 
-      - name: Compile Main Target Only (Bypasses Extension Signing Checks)
+      - name: Compile Unsigned Monolithic Scheme (Fixes SwiftDriver Package Errors)
         run: |
           xcodebuild build \
                      -project IceCubesApp.xcodeproj \
-                     -target IceCubesApp \
+                     -scheme IceCubesApp \
                      -configuration Debug \
-                     -sdk iphoneos \
+                     -destination 'generic/platform=iOS' \
                      CODE_SIGNING_ALLOWED=NO \
                      CODE_SIGNING_REQUIRED=NO \
                      ONLY_ACTIVE_ARCH=NO
